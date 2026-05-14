@@ -1,0 +1,423 @@
+<Window x:Class="FastbootFlasherGUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="不知道啊工具箱"
+        Icon="logo.ico"
+        MinWidth="1060" MinHeight="680" Width="1200" Height="760"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI"
+        Background="{DynamicResource PageBg}"
+        WindowStyle="None" AllowsTransparency="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="PageBg" Color="#F9F2E0"/>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="56" ResizeBorderThickness="4"
+                      GlassFrameThickness="0" CornerRadius="14"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <Border Background="{DynamicResource PageBg}" CornerRadius="14">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ═══ 侧边栏 ═══ -->
+            <Border Grid.Column="0" Background="{DynamicResource SidebarBg}" CornerRadius="14,0,0,14" Padding="18,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="56"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Image Source="logo.png" Width="48" Height="48"
+                               Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,24,0,0">
+                        <Border x:Name="NavHome" Background="{DynamicResource NavActive}" CornerRadius="8" Padding="12,10"
+                                Cursor="Hand" MouseLeftButtonDown="NavHome_Click">
+                            <TextBlock Text="主页" Foreground="{DynamicResource Text1}" FontSize="13" FontWeight="SemiBold"/>
+                        </Border>
+                        <Border x:Name="NavFlash" Background="Transparent" CornerRadius="8" Padding="12,10"
+                                Cursor="Hand" Margin="0,4,0,0" MouseLeftButtonDown="NavFlash_Click">
+                            <TextBlock Text="刷写" Foreground="{DynamicResource Text2}" FontSize="13"/>
+                        </Border>
+                        <Border x:Name="NavTools" Background="Transparent" CornerRadius="8" Padding="12,10"
+                                Cursor="Hand" Margin="0,4,0,0" MouseLeftButtonDown="NavTools_Click">
+                            <TextBlock Text="工具" Foreground="{DynamicResource Text2}" FontSize="13"/>
+                        </Border>
+                        <Border x:Name="NavAbout" Background="Transparent" CornerRadius="8" Padding="12,10"
+                                Cursor="Hand" Margin="0,4,0,0" MouseLeftButtonDown="NavAbout_Click">
+                            <TextBlock Text="关于" Foreground="{DynamicResource Text2}" FontSize="13"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                        <Border Height="1" Background="{DynamicResource Divider}" Margin="0,10"/>
+                        <StackPanel Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="BtnTheme" Width="36" Height="36" Style="{StaticResource TitleBarBtn}"
+                                    Click="BtnTheme_Click" Foreground="{DynamicResource Text3}" FontSize="13">◐</Button>
+                        </StackPanel>
+                        <Button Style="{StaticResource BtnTiny}" Click="BtnClose_Click" Margin="0,6,0,0"
+                                Foreground="{DynamicResource Danger}">
+                            <TextBlock Text="退出"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ═══ 右侧 ═══ -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="56"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="{DynamicResource SidebarBg}" CornerRadius="0,14,0,0"
+                        BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1"
+                        MouseLeftButtonDown="TitleBar_MouseDown">
+                    <DockPanel Margin="20,0">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="BtnDetect" Style="{StaticResource BtnTiny}" Click="BtnDetect_Click">检测</Button>
+                            <Button x:Name="BtnRefresh" Style="{StaticResource BtnTiny}" Click="BtnRefresh_Click" Margin="4,0,0,0">刷新</Button>
+                            <Button x:Name="BtnAdb" Style="{StaticResource BtnTiny}" Click="BtnAdb_Click" Margin="4,0,0,0">ADB</Button>
+                            <Border Width="1" Background="{DynamicResource Divider}" Margin="10,8"/>
+                            <Button Width="32" Height="32" Style="{StaticResource TitleBarBtn}" Click="BtnMinimize_Click">─</Button>
+                            <Button Width="32" Height="32" Style="{StaticResource TitleBarBtn}" Click="BtnMaximize_Click">□</Button>
+                            <Button Width="32" Height="32" Style="{StaticResource TitleBarBtnClose}" Click="BtnClose_Click">✕</Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="刷写" Foreground="{DynamicResource Text1}" FontSize="14" FontWeight="SemiBold"/>
+                            <Ellipse x:Name="DotStatus" Width="7" Height="7" Fill="{DynamicResource DotColor}" Margin="14,0,6,0"/>
+                            <TextBlock x:Name="LblStatus" Text="检测中…" Foreground="{DynamicResource Text2}" FontSize="12"/>
+                            <TextBlock Text="·" Foreground="{DynamicResource Text3}" FontSize="12" Margin="10,0"/>
+                            <TextBlock x:Name="LblSlot" Text="Slot —" Foreground="{DynamicResource Text3}" FontSize="11.5"/>
+                            <TextBlock Text="·" Foreground="{DynamicResource Text3}" FontSize="11.5" Margin="10,0"/>
+                            <TextBlock x:Name="LblFastboot" Text="—" Foreground="{DynamicResource Text3}" FontSize="11.5"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <!-- ═══ 主页 = 设备信息 ═══ -->
+                <ScrollViewer Grid.Row="1" x:Name="PageHome" VerticalScrollBarVisibility="Auto" Visibility="Visible">
+                    <Grid Margin="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 设备状态 -->
+                        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource Accent}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="DEVICE STATUS" Foreground="{DynamicResource OnAccent}" FontSize="10" FontWeight="Bold" Opacity="0.5"/>
+                                <DockPanel Margin="0,8,0,0">
+                                    <StackPanel DockPanel.Dock="Right" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="HomeStatus" Text="未连接" Foreground="{DynamicResource OnAccent}"
+                                                   FontSize="20" FontWeight="Bold" Opacity="0.6"/>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock x:Name="HomeModel" Text="—" Foreground="{DynamicResource OnAccent}"
+                                                   FontSize="28" FontWeight="Bold"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <TextBlock x:Name="HomeAndroid" Text="" Foreground="{DynamicResource OnAccent}"
+                                                       FontSize="12" Opacity="0.5"/>
+                                            <TextBlock Text=" · " Foreground="{DynamicResource OnAccent}" FontSize="12" Opacity="0.4" x:Name="HomeDot" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="HomeKernel" Text="" Foreground="{DynamicResource OnAccent}"
+                                                       FontSize="12" Opacity="0.5"/>
+                                            <TextBlock Text=" · " Foreground="{DynamicResource OnAccent}" FontSize="12" Opacity="0.4" x:Name="HomeDot2" Visibility="Collapsed"/>
+                                            <TextBlock x:Name="HomeSlot" Text="" Foreground="{DynamicResource OnAccent}"
+                                                       FontSize="12" Opacity="0.5"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 设备详情 -->
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="设备详情" Foreground="{DynamicResource Text1}" FontSize="14" FontWeight="Bold" Margin="0,0,0,12"/>
+                                <UniformGrid Columns="3" Rows="5" x:Name="GridDeviceInfo"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 快捷操作 -->
+                        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg2}" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="快捷操作" Foreground="{DynamicResource Text1}" FontSize="14" FontWeight="Bold" Margin="0,0,0,12"/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource BtnPrimary}" Height="36" Width="130" Click="BtnRebootSys_Click" Margin="0,0,10,6">重启系统</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Height="36" Width="140" Click="BtnRebootFBD_Click" Margin="0,0,10,6">Fastbootd</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Height="36" Width="140" Click="BtnRebootBL_Click" Margin="0,0,10,6">Bootloader</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Height="36" Width="130" Click="BtnRebootRec_Click" Margin="0,0,10,6">Recovery</Button>
+                                    <Button Style="{StaticResource BtnNeutral}" Height="36" Width="120" Click="BtnDetect_Click">刷新</Button>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+                <ScrollViewer Grid.Row="1" x:Name="PageFlash" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <Grid Margin="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 刷写页 - 映像列表 -->
+                        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="IMAGES" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock x:Name="CardImgCount" Text="" Foreground="{DynamicResource Accent}" FontSize="10" FontWeight="Bold" Margin="4,0,0,0"/>
+                                </StackPanel>
+                                <ItemsControl Grid.Row="1" x:Name="IcImages" Visibility="Visible">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsChecked}" Margin="4,2" Padding="8,4"
+                                                      Foreground="{DynamicResource Text1}" FontSize="12"
+                                                      Content="{Binding FileName}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <DataGrid x:Name="DgImages" Grid.Row="1" Visibility="Collapsed"
+                                          AutoGenerateColumns="False" CanUserAddRows="False"
+                                          CanUserDeleteRows="False" CanUserResizeRows="False"
+                                          HeadersVisibility="None" SelectionMode="Extended"
+                                          RowHeight="28" BorderThickness="0"
+                                          Background="Transparent"
+                                          Foreground="{DynamicResource Text1}"
+                                          RowBackground="Transparent"
+                                          AlternatingRowBackground="{DynamicResource RowAlt}"
+                                          HorizontalGridLinesBrush="{DynamicResource GridLine}">
+                                    <DataGrid.Columns>
+                                        <DataGridCheckBoxColumn Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Width="30"/>
+                                        <DataGridTextColumn Binding="{Binding FileName}" Width="*"/>
+                                        <DataGridTextColumn Binding="{Binding PartitionDisplay}" Width="80"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
+
+                        <!-- Slot / 操作 -->
+                        <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg2}" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="操作" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Slot" Foreground="{DynamicResource Text2}" FontSize="10.5" Margin="0,0,0,4"/>
+                                <ComboBox x:Name="CmbSlot" Width="72" Height="28"
+                                          Background="{DynamicResource InputBg}" Foreground="{DynamicResource Text1}"
+                                          BorderBrush="{DynamicResource Border}">
+                                    <ComboBoxItem IsSelected="True">a</ComboBoxItem>
+                                    <ComboBoxItem>b</ComboBoxItem>
+                                </ComboBox>
+                                <Button Style="{StaticResource BtnSecondary}" Height="30" Margin="0,8,0,0"
+                                        Click="BtnScan_Click" Content="扫描 images"/>
+                                <Button Style="{StaticResource BtnSecondary}" Height="30" Margin="0,4,0,0"
+                                        Click="BtnBrowse_Click" Content="浏览映像…"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 刷写 -->
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,8,8,0"
+                                BorderBrush="{DynamicResource Accent}" BorderThickness="2,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="FLASH" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,12"/>
+                                <WrapPanel>
+                                    <Button x:Name="BtnFlashSel" Style="{StaticResource BtnPrimary}" Height="36" Width="140"
+                                            Click="BtnFlashSel_Click" Content="刷写选中" Margin="0,0,12,0"/>
+                                    <Button x:Name="BtnFlashAll" Style="{StaticResource BtnPrimary}" Height="36" Width="140"
+                                            Click="BtnFlashAll_Click" Content="一键全刷"/>
+                                </WrapPanel>
+                                <WrapPanel Margin="0,8,0,0">
+                                    <CheckBox x:Name="ChkWipeAfter" Content="刷写后清除数据"
+                                              Foreground="{DynamicResource Text2}" FontSize="11" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                                    <Button x:Name="BtnWipeData" Content="清除用户数据"
+                                            Style="{StaticResource BtnWarning}" Height="32" Width="130" Click="BtnWipeData_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 重启 -->
+                        <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="8,8,0,0">
+                            <StackPanel>
+                                <TextBlock Text="REBOOT" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <WrapPanel>
+                                    <Button Style="{StaticResource BtnPrimary}" Width="72" Height="28" Click="BtnRebootSys_Click" Margin="0,0,4,4">系统</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Width="88" Height="28" Click="BtnRebootBL_Click" Margin="0,0,4,4">Bootloader</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Width="88" Height="28" Click="BtnRebootRec_Click" Margin="0,0,4,4">Recovery</Button>
+                                    <Button Style="{StaticResource BtnPrimary}" Width="88" Height="28" Click="BtnRebootFBD_Click" Margin="0,0,4,4">Fastbootd</Button>
+                                    <Button Style="{StaticResource BtnDanger}" Width="68" Height="28" Click="BtnPowerOff_Click">关机</Button>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- ═══ 工具页 ═══ -->
+                <ScrollViewer Grid.Row="1" x:Name="PageTools" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <Grid Margin="18">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 投屏 -->
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="SCREEN" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="ADB 投屏" Foreground="{DynamicResource Text1}" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+                                <TextBlock Text="通过 scrcpy 将手机画面投射到电脑" Foreground="{DynamicResource Text2}" FontSize="11" Margin="0,0,0,12"/>
+                                <Button Style="{StaticResource BtnPurple}" Height="36" Click="BtnScrcpy_Click">📱 启动投屏</Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 解包 -->
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="PAYLOAD" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="payload.bin 解包" Foreground="{DynamicResource Text1}" FontSize="16" FontWeight="Bold" Margin="0,0,0,4"/>
+                                <TextBlock Text="提取 OTA 固件中的所有分区映像" Foreground="{DynamicResource Text2}" FontSize="11" Margin="0,0,0,12"/>
+                                <Button Style="{StaticResource BtnNeutral}" Height="36" Click="BtnPayload_Click">📦 选择文件</Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Slot -->
+                        <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg2}" Margin="0,0,0,8">
+                            <StackPanel>
+                                <TextBlock Text="SLOT" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <Button Style="{StaticResource BtnPrimary}" Height="36" Click="BtnSlotA_Click" Margin="0,0,0,8">切换到 A</Button>
+                                <Button Style="{StaticResource BtnPrimary}" Height="36" Click="BtnSlotB_Click">切换到 B</Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Lock -->
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="0,8,8,0">
+                            <StackPanel>
+                                <TextBlock Text="LOCK" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <Button Style="{StaticResource BtnDanger}" Height="36" Click="BtnUnlock_Click" Margin="0,0,0,8">解锁 Bootloader</Button>
+                                <Button Style="{StaticResource BtnNeutral}" Height="36" Click="BtnLock_Click">上锁 Bootloader</Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Erase -->
+                        <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource DashCard}"
+                                Background="{DynamicResource CardBg}" Margin="8,8,0,0">
+                            <StackPanel>
+                                <TextBlock Text="ERASE" Foreground="{DynamicResource Text3}" FontSize="10" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <WrapPanel>
+                                    <TextBox x:Name="TxtErase" Text="userdata" Width="140" Height="32"
+                                             Background="{DynamicResource InputBg}" Foreground="{DynamicResource Text1}"
+                                             BorderBrush="{DynamicResource Border}" CaretBrush="{DynamicResource Text1}"
+                                             Margin="0,0,10,0" FontSize="13" VerticalAlignment="Center"/>
+                                    <Button Style="{StaticResource BtnWarning}" Width="80" Height="32" Click="BtnErase_Click" Margin="0,0,10,0">擦除</Button>
+                                    <Button Style="{StaticResource BtnWarning}" Width="100" Height="32" Click="BtnWipeCache_Click">Cache</Button>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- ═══ 关于页 ═══ -->
+                <ScrollViewer Grid.Row="1" x:Name="PageAbout" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,40,0,0">
+                        <Image Source="logo.png" Width="80" Height="80" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                        <TextBlock Text="不知道啊工具箱" Foreground="{DynamicResource Text1}"
+                                   FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,16,0,4"/>
+                        <TextBlock Foreground="{DynamicResource Text2}" FontSize="12"
+                                   HorizontalAlignment="Center" Margin="0,0,0,8" TextWrapping="Wrap" MaxWidth="400"
+                                   TextAlignment="Center">
+                            此工具为免费工具<LineBreak/>如若是付费获取，请联系对应平台以及群内举报
+                        </TextBlock>
+                        <TextBlock Text="工具由 ColorArchive 团队构建" Foreground="{DynamicResource Text2}"
+                                   FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                        <TextBlock HorizontalAlignment="Center" FontSize="12">
+                            <Hyperlink NavigateUri="https://www.coolapk.com/u/36064349" RequestNavigate="Hyperlink_RequestNavigate"
+                                       Foreground="{DynamicResource Accent}">酷安 @不知道是不知道啊</Hyperlink>
+                        </TextBlock>
+                        <TextBlock Foreground="{DynamicResource Text2}" FontSize="11"
+                                   HorizontalAlignment="Center" Margin="0,20,0,6" Text="问题反馈"/>
+                        <TextBox Text="478538539" IsReadOnly="True" BorderThickness="0"
+                                 Background="Transparent" Foreground="{DynamicResource Text2}"
+                                 FontSize="12" HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                                 Width="120" Cursor="Arrow"/>
+                        <TextBox Text="1101199405" IsReadOnly="True" BorderThickness="0"
+                                 Background="Transparent" Foreground="{DynamicResource Text2}"
+                                 FontSize="12" HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                                 Width="120" Cursor="Arrow" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═══ 日志 ═══ -->
+                <Border Grid.Row="2" x:Name="LogPanel" Height="170" Background="{DynamicResource LogBg}" Visibility="Collapsed"
+                        BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0">
+                    <Grid Margin="18,8,18,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <DockPanel Grid.Row="0" Margin="0,0,0,4">
+                            <Button DockPanel.Dock="Right" Content="清空" Style="{StaticResource BtnTiny}" Click="BtnClearLog_Click"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="5" Height="5" Fill="{DynamicResource Accent}" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="日志" Foreground="{DynamicResource Text2}" FontSize="12" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </DockPanel>
+                        <RichTextBox x:Name="RtbLog" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Text2}"
+                                     FontFamily="Consolas" FontSize="11.5" BorderThickness="0" IsReadOnly="True"
+                                     VerticalScrollBarVisibility="Auto"/>
+                        <DockPanel Grid.Row="2">
+                            <ProgressBar x:Name="Progress" Height="3" Width="120" IsIndeterminate="True"
+                                         Visibility="Collapsed" DockPanel.Dock="Right"/>
+                            <TextBlock x:Name="LblProgress" Text="就绪" Foreground="{DynamicResource Text3}" FontSize="10.5"/>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

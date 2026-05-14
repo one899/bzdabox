@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>FastbootFlasherGUI</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <ApplicationIcon>..\FastbootFlasherGUI\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="App.xaml.cs" />
+    <Compile Include="..\FastbootFlasherGUI\App.xaml.cs" Link="App.xaml.cs" />
+    <Compile Include="..\FastbootFlasher\FastbootHelper.cs" Link="FastbootHelper.cs" />
+    <Compile Include="..\FastbootFlasher\ConsoleWriter.cs" Link="ConsoleWriter.cs" />
+    <Compile Include="..\FastbootFlasher\Simulator.cs" Link="Simulator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="..\FastbootFlasherGUI\App.xaml" Link="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\FastbootFlasherGUI\logo.png" Link="logo.png" />
+    <Resource Include="..\FastbootFlasherGUI\logo.ico" Link="logo.ico" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\payload-dumper-go_1.3.0_windows_amd64\payload-dumper-go.exe" Link="Tools\payload-dumper-go.exe" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\scrcpy.exe" Link="Tools\scrcpy\scrcpy.exe" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\adb.exe" Link="Tools\scrcpy\adb.exe" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\AdbWinApi.dll" Link="Tools\scrcpy\AdbWinApi.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\AdbWinUsbApi.dll" Link="Tools\scrcpy\AdbWinUsbApi.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\avcodec-61.dll" Link="Tools\scrcpy\avcodec-61.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\avformat-61.dll" Link="Tools\scrcpy\avformat-61.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\avutil-59.dll" Link="Tools\scrcpy\avutil-59.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\libusb-1.0.dll" Link="Tools\scrcpy\libusb-1.0.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\SDL2.dll" Link="Tools\scrcpy\SDL2.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\swresample-5.dll" Link="Tools\scrcpy\swresample-5.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\scrcpy-server" Link="Tools\scrcpy\scrcpy-server" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\scrcpy-win32-v3.3.3\icon.png" Link="Tools\scrcpy\icon.png" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\platform-tools\adb.exe" Link="Tools\adb\adb.exe" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\platform-tools\fastboot.exe" Link="Tools\adb\fastboot.exe" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\platform-tools\AdbWinApi.dll" Link="Tools\adb\AdbWinApi.dll" />
+    <EmbeddedResource Include="E:\f盘\工具箱\拓展\platform-tools\AdbWinUsbApi.dll" Link="Tools\adb\AdbWinUsbApi.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="FastbootFlasher" />
+  </ItemGroup>
+
+</Project>
